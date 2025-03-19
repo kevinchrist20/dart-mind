@@ -1,105 +1,68 @@
 import * as vscode from 'vscode';
-import { ComplexityResult } from './utils';
+import { BasePanel } from './base-panel';
+import { ComplexityResult, VIEWS } from '../types';
+import { getComplexityDecoration, capitalize } from '../utils';
 
-export class RefactorPanel {
-  public static currentPanel: RefactorPanel | undefined;
-  private readonly _panel: vscode.WebviewPanel;
-  private readonly _extensionUri: vscode.Uri;
-  private _complexityData: ComplexityResult | undefined;
-
-  private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
-    this._panel = panel;
-    this._extensionUri = extensionUri;
-    
-    this._panel.onDidDispose(() => this.dispose(), null);
-
-    // Set initial HTML content
-    this._panel.webview.html = this._getHtmlForWebview();
+export class RefactorPanel extends BasePanel {
+  private static instance: RefactorPanel | undefined;
+  
+  private constructor(extensionUri: vscode.Uri, column: vscode.ViewColumn) {
+    super(
+      VIEWS.REFACTOR_PANEL,
+      'DartMind - Refactoring Suggestions',
+      column,
+      extensionUri,
+      { enableScripts: true }
+    );
   }
 
+  /**
+   * Creates or shows the refactor panel
+   */
   public static createOrShow(
     extensionUri: vscode.Uri, 
     document: vscode.TextDocument, 
     position: vscode.Position, 
     complexityData: ComplexityResult
-  ) {
-    const columnToShowIn = vscode.window.activeTextEditor 
+  ): RefactorPanel {
+    const column = vscode.window.activeTextEditor 
       ? vscode.ViewColumn.Beside 
       : vscode.ViewColumn.One;
 
-    if (RefactorPanel.currentPanel) {
-      RefactorPanel.currentPanel._panel.reveal(columnToShowIn);
-      RefactorPanel.currentPanel._updateContent(complexityData);
-      return;
+    // If we already have a panel, show it
+    if (RefactorPanel.instance) {
+      RefactorPanel.instance.reveal(column);
+      RefactorPanel.instance.updateContent(complexityData);
+      return RefactorPanel.instance;
     }
 
-    const panel = vscode.window.createWebviewPanel(
-      'refactorPanel',
-      'DartMind - Refactoring Suggestions',
-      columnToShowIn,
-      {
-        enableScripts: true
-      }
-    );
-
-    RefactorPanel.currentPanel = new RefactorPanel(panel, extensionUri);
-    RefactorPanel.currentPanel._updateContent(complexityData);
+    // Otherwise, create a new panel
+    RefactorPanel.instance = new RefactorPanel(extensionUri, column);
+    RefactorPanel.instance.updateContent(complexityData);
+    
+    return RefactorPanel.instance;
   }
 
-  private _updateContent(complexityData: ComplexityResult) {
-    this._complexityData = complexityData;
-    this._panel.webview.html = this._getHtmlForWebview();
+  /**
+   * Disposes the panel
+   */
+  public dispose(): void {
+    RefactorPanel.instance = undefined;
+    super.dispose();
   }
 
-  public dispose() {
-    RefactorPanel.currentPanel = undefined;
-    this._panel.dispose();
-  }
-
-  private _getHtmlForWebview(): string {
-    const data = this._complexityData;
+  /**
+   * Generates HTML content for the refactor panel
+   */
+  protected getHtmlContent(): string {
+    const data = this.data as ComplexityResult;
     
     if (!data) {
-      return `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Refactoring Suggestions</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 20px; color: #333; line-height: 1.6; }
-            h2 { color: #007acc; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-            .loading { text-align: center; font-style: italic; color: #666; }
-          </style>
-        </head>
-        <body>
-          <h2>Refactoring Suggestions</h2>
-          <div class="loading">Loading complexity data...</div>
-        </body>
-        </html>
-      `;
+      return this.getLoadingHtml();
     }
 
-    // Determine styles and icons based on complexity category
-    let headerColor = '#007acc';
-    let headerIcon = '🔍';
+    const { color, icon } = getComplexityDecoration(data.complexityCategory);
     
-    switch (data.complexityCategory.toLowerCase()) {
-      case 'high':
-        headerColor = '#e51400';
-        headerIcon = '❌';
-        break;
-      case 'medium':
-        headerColor = '#f09000';
-        headerIcon = '⚠️';
-        break;
-      case 'low':
-        headerColor = '#008000';
-        headerIcon = '✅';
-        break;
-    }
-
     // Generate suggestions HTML
     let suggestionsHtml = '';
     if (data.refactoringSuggestions && data.refactoringSuggestions.length > 0) {
@@ -127,7 +90,7 @@ export class RefactorPanel {
             margin: 0 auto;
           }
           h2 { 
-            color: ${headerColor}; 
+            color: ${color}; 
             border-bottom: 1px solid #eee; 
             padding-bottom: 10px; 
           }
@@ -136,7 +99,7 @@ export class RefactorPanel {
             border-radius: 5px;
             padding: 15px;
             margin-bottom: 20px;
-            border-left: 4px solid ${headerColor};
+            border-left: 4px solid ${color};
           }
           .metrics-table {
             width: 100%;
@@ -167,7 +130,7 @@ export class RefactorPanel {
         </style>
       </head>
       <body>
-        <h2>${headerIcon} ${data.type.charAt(0).toUpperCase() + data.type.slice(1)} Complexity Analysis</h2>
+        <h2>${icon} ${capitalize(data.type)} Complexity Analysis</h2>
         
         <div class="metrics-box">
           <table class="metrics-table">
@@ -177,7 +140,7 @@ export class RefactorPanel {
             </tr>
             <tr>
               <td>Type:</td>
-              <td>${data.type.charAt(0).toUpperCase() + data.type.slice(1)}</td>
+              <td>${capitalize(data.type)}</td>
             </tr>
             <tr>
               <td>Complexity Score:</td>
@@ -198,6 +161,31 @@ export class RefactorPanel {
         <div class="suggestions-container">
           ${suggestionsHtml}
         </div>
+      </body>
+      </html>
+    `;
+  }
+
+  /**
+   * Generates HTML for loading state
+   */
+  private getLoadingHtml(): string {
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Refactoring Suggestions</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; color: #333; line-height: 1.6; }
+          h2 { color: #007acc; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+          .loading { text-align: center; font-style: italic; color: #666; }
+        </style>
+      </head>
+      <body>
+        <h2>Refactoring Suggestions</h2>
+        <div class="loading">Loading complexity data...</div>
       </body>
       </html>
     `;
