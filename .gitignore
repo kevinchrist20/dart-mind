@@ -4,8 +4,8 @@ node_modules
 .vscode-test/
 *.vsix
 .vscode/
-/src/analyzer/.dart_tool
-/src/analyzer/pubspec.lock
+/server/.dart_tool
+/server/pubspec.lock
 
 **/.DS_Store
 .DS_Store

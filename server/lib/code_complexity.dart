@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
+import 'package:lsp_server/lsp_server.dart';
 
 Map<String, MethodComplexityMetrics> getComplexity(String code) {
   final parseCodeResult = parseString(content: code);
@@ -255,5 +256,14 @@ extension StringExtension on String {
     return this.isNotEmpty
         ? '${this[0].toUpperCase()}${this.substring(1)}'
         : '';
+  }
+}
+
+extension TextDocumentPosition on TextDocumentItem {
+  Position positionAt(int offset) {
+    final lines = text.substring(0, offset).split('\n');
+    final line = lines.length - 1;
+    final character = lines.last.length;
+    return Position(line: line, character: character);
   }
 }
