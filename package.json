@@ -1,8 +1,8 @@
 {
-  "name": "dart-analyzer",
-  "displayName": "Dart Code Analyzer",
-  "description": "Analyzes Dart code for complexity metrics",
-  "version": "0.1.0",
+  "name": "dart-mind",
+  "displayName": "DartMind",
+  "description": "DartMind is an intelligent VS Code extension that provides real-time code analysis for Dart and Flutter projects. It helps developers write cleaner, more maintainable code by analyzing cognitive complexity, detecting code smells, and offering performance insights.",
+  "version": "0.0.1",
   "engines": {
     "vscode": "^1.60.0"
   },
@@ -15,21 +15,22 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "codeComplexity",
+      "properties": {
+        "codeComplexity.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable code complexity analysis."
+        }
+      }
+    },
     "commands": [
       {
-        "command": "dart-analyzer.analyzeCurrentFile",
-        "title": "Analyze Dart File"
+        "command": "complexity.showComplexity",
+        "title": "Code Complexity"
       }
-    ],
-    "menus": {
-      "editor/context": [
-        {
-          "when": "editorLangId == dart",
-          "command": "dart-analyzer.analyzeCurrentFile",
-          "group": "navigation"
-        }
-      ]
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

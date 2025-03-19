@@ -236,13 +236,13 @@ class MethodNameVisitor extends RecursiveAstVisitor<void> {
       // Categorize method complexity
       if (entry.value.cognitiveComplexity > 15) {
         entry.value.complexityCategory = "High";
-        entry.value.riskAssessment = "High risk - Consider refactoring";
-      } else if (entry.value.cognitiveComplexity > 10) {
+        entry.value.riskAssessment = "🙈 High risk - Needs refactoring";
+      } else if (entry.value.cognitiveComplexity > 8) {
         entry.value.complexityCategory = "Medium";
-        entry.value.riskAssessment = "Medium risk - May need attention";
+        entry.value.riskAssessment = "🧐 Moderate risk - Consider refactoring";
       } else {
         entry.value.complexityCategory = "Low";
-        entry.value.riskAssessment = "Low risk - Everything looks good!";
+        entry.value.riskAssessment = "🏅 Low risk - Everything looks good!";
       }
     }
 
