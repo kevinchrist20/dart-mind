@@ -5,7 +5,6 @@ import {
 	LanguageClientOptions,
 	ServerOptions,
 } from 'vscode-languageclient/node';
-import { ComplexityResult } from './utils';
 import { RefactorPanel } from './refactor-panel';
 
 let client: LanguageClient;
@@ -49,13 +48,23 @@ export function activate(context: vscode.ExtensionContext) {
 					complexityCategory,
 					cognitiveComplexity,
 					nestingLevel,
-					numberOfParameters
+					numberOfParameters,
+					refactoringSuggestions
 				} = details;
+				
 				RefactorPanel.createOrShow(
 					context.extensionUri,
 					vscode.window.activeTextEditor?.document!,
 					vscode.window.activeTextEditor?.selection.active!,
-					cognitiveComplexity
+					{
+						name,
+						type,
+						complexityCategory,
+						cognitiveComplexity,
+						nestingLevel,
+						numberOfParameters,
+						refactoringSuggestions: refactoringSuggestions || []
+					}
 				);
 			}
 		}

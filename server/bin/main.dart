@@ -10,9 +10,10 @@ Future<void> main(List<String> arguments) async {
   server.onInitialize((params) async {
     return InitializeResult(
       capabilities: ServerCapabilities(
-          textDocumentSync: const Either2.t1(TextDocumentSyncKind.Full),
-          codeLensProvider: CodeLensOptions(resolveProvider: false),
-          hoverProvider: Either2.t1(true)),
+        textDocumentSync: const Either2.t1(TextDocumentSyncKind.Full),
+        codeLensProvider: CodeLensOptions(resolveProvider: false),
+        // hoverProvider: Either2.t1(true),
+      ),
     );
   });
 
@@ -66,6 +67,7 @@ Future<void> main(List<String> arguments) async {
                 'cognitiveComplexity': metric.cognitiveComplexity,
                 'nestingLevel': metric.nestingLevel,
                 'numberOfParameters': metric.numberOfParameters,
+                'refactoringSuggestions': metric.refactoringSuggestions,
               }
             ],
           ),
@@ -75,6 +77,45 @@ Future<void> main(List<String> arguments) async {
 
     return codeLenses;
   });
+
+  // server.onHover((params) async {
+  //   final uri = params.textDocument.uri;
+  //   final text = documentContents[uri.toString()];
+
+  //   if (text == null) return Future.error('No text found for document');
+
+  //   final offset = params.position.toOffset(text);
+  //   final line = _getLineFromOffset(text, offset);
+
+  //   final results = getComplexity(text);
+  //   final hoverResults = results.values.where((metric) {
+  //     return metric.startPosition <= offset && metric.endPosition >= offset;
+  //   });
+
+  //   if (hoverResults.isEmpty) return Future.error('No complexity found');
+
+  //   final metric = hoverResults.first;
+
+  //   return Hover(
+  //     contents: Either2.t1(
+  //       MarkupContent(kind: MarkupKind.Markdown, value: '''
+  //         # ${metric.name}
+
+  //         - **Type:** ${metric.type}
+  //         - **Complexity Category:** ${metric.complexityCategory}
+  //         - **Cognitive Complexity:** ${metric.cognitiveComplexity}
+  //         - **Nesting Level:** ${metric.nestingLevel}
+  //         - **Number of Parameters:** ${metric.numberOfParameters}
+  //         - **Line Count:** ${metric.lineCount}
+  //         - **Risk Assessment:** ${metric.riskAssessment}
+  //         '''),
+  //     ),
+  //     range: Range(
+  //       start: Position(line: line, character: 0),
+  //       end: Position(line: line, character: 0),
+  //     ),
+  //   );
+  // });
 
   await server.listen();
 }
@@ -89,12 +130,4 @@ int _getLineFromOffset(String text, int offset) {
   }
 
   return line;
-}
-
-extension PositionOffset on Position {
-  int toOffset(String text) {
-    final lines = text.split('\n');
-    final line = lines[this.line].substring(0, character);
-    return lines.sublist(0, this.line).join('\n').length + line.length;
-  }
 }

@@ -1,7 +1,6 @@
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
-import 'package:lsp_server/lsp_server.dart';
 
 Map<String, MethodComplexityMetrics> getComplexity(String code) {
   final parseCodeResult = parseString(content: code);
@@ -23,6 +22,7 @@ class MethodComplexityMetrics {
   int endPosition = 0;
   String complexityCategory = '';
   String riskAssessment = '';
+  List<String> refactoringSuggestions = [];
 
   MethodComplexityMetrics(this.name, this.type);
 }
@@ -246,26 +246,42 @@ class MethodNameVisitor extends RecursiveAstVisitor<void> {
         entry.value.riskAssessment =
             "✅ Low Complexity (Score: ${entry.value.cognitiveComplexity}) - Everything looks good!";
       }
+
+      _generateRefactoringSuggestions(entry.value);
     }
 
     return methodMetrics;
   }
-}
 
-// Helper extension
-extension StringExtension on String {
-  String capitalize() {
-    return this.isNotEmpty
-        ? '${this[0].toUpperCase()}${this.substring(1)}'
-        : '';
-  }
-}
+  void _generateRefactoringSuggestions(MethodComplexityMetrics metrics) {
+    List<String> suggestions = [];
 
-extension TextDocumentPosition on TextDocumentItem {
-  Position positionAt(int offset) {
-    final lines = text.substring(0, offset).split('\n');
-    final line = lines.length - 1;
-    final character = lines.last.length;
-    return Position(line: line, character: character);
+    // Suggestions based on complexity score
+    if (metrics.cognitiveComplexity > 15) {
+      suggestions.add("Consider breaking '${metrics.name}' into multiple smaller ${metrics.type}s with single responsibilities.");
+      suggestions.add("Refactor complex conditional logic into separate helper ${metrics.type}s with descriptive names.");
+    }
+
+    // Suggestions based on nesting level
+    if (metrics.nestingLevel > 3) {
+      suggestions.add("Reduce nesting depth (currently at level ${metrics.nestingLevel}) by using early returns or guard clauses.");
+      suggestions.add("Extract deeply nested code into well-named helper ${metrics.type}s.");
+    }
+
+    // Suggestions based on number of parameters
+    if (metrics.numberOfParameters > 4) {
+      suggestions.add("Reduce the number of parameters (currently ${metrics.numberOfParameters}) by grouping related parameters into objects.");
+      suggestions.add("Consider using the Builder pattern to make parameter passing more readable.");
+    }
+
+    // General suggestions based on complexity
+    if (metrics.cognitiveComplexity > 8) {
+      suggestions.add("Use more descriptive variable names to improve readability.");
+      suggestions.add("Add comments to explain complex logic or business rules.");
+      suggestions.add("Look for repeated code patterns that could be extracted into reusable functions.");
+    }
+
+    // Store the suggestions in the metrics object
+    metrics.refactoringSuggestions = suggestions;
   }
 }
