@@ -27,8 +27,8 @@
     },
     "commands": [
       {
-        "command": "complexity.showComplexity",
-        "title": "Code Complexity"
+        "command": "dartmind.showComplexity",
+        "title": "Show Code Complexity"
       }
     ]
   },

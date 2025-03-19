@@ -47,7 +47,7 @@ export class LspService {
     );
 
     // Start the client
-    // this.client.start();
+    this.client.start();
 
     return this.client;
   }
