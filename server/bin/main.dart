@@ -10,9 +10,9 @@ Future<void> main(List<String> arguments) async {
   server.onInitialize((params) async {
     return InitializeResult(
       capabilities: ServerCapabilities(
-        textDocumentSync: const Either2.t1(TextDocumentSyncKind.Full),
-        codeLensProvider: CodeLensOptions(resolveProvider: false),
-      ),
+          textDocumentSync: const Either2.t1(TextDocumentSyncKind.Full),
+          codeLensProvider: CodeLensOptions(resolveProvider: false),
+          hoverProvider: Either2.t1(true)),
     );
   });
 
@@ -58,6 +58,16 @@ Future<void> main(List<String> arguments) async {
           command: Command(
             title: metric.riskAssessment,
             command: "complexity.showComplexity",
+            arguments: [
+              {
+                'name': metric.name,
+                'type': metric.type,
+                'complexityCategory': metric.complexityCategory,
+                'cognitiveComplexity': metric.cognitiveComplexity,
+                'nestingLevel': metric.nestingLevel,
+                'numberOfParameters': metric.numberOfParameters,
+              }
+            ],
           ),
         ),
       );
@@ -79,4 +89,12 @@ int _getLineFromOffset(String text, int offset) {
   }
 
   return line;
+}
+
+extension PositionOffset on Position {
+  int toOffset(String text) {
+    final lines = text.split('\n');
+    final line = lines[this.line].substring(0, character);
+    return lines.sublist(0, this.line).join('\n').length + line.length;
+  }
 }

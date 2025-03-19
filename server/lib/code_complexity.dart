@@ -233,16 +233,18 @@ class MethodNameVisitor extends RecursiveAstVisitor<void> {
   // ------------------------
   Map<String, MethodComplexityMetrics> analyzeCollectedMethods() {
     for (var entry in methodMetrics.entries) {
-      // Categorize method complexity
       if (entry.value.cognitiveComplexity > 15) {
         entry.value.complexityCategory = "High";
-        entry.value.riskAssessment = "🙈 High risk - Needs refactoring";
+        entry.value.riskAssessment =
+            "❌ High Complexity (Score: ${entry.value.cognitiveComplexity}) - Refactor recommended!";
       } else if (entry.value.cognitiveComplexity > 8) {
         entry.value.complexityCategory = "Medium";
-        entry.value.riskAssessment = "🧐 Moderate risk - Consider refactoring";
+        entry.value.riskAssessment =
+            "⚠️ Medium Complexity (Score: ${entry.value.cognitiveComplexity}) - Consider simplifying this ${entry.value.type}";
       } else {
         entry.value.complexityCategory = "Low";
-        entry.value.riskAssessment = "🏅 Low risk - Everything looks good!";
+        entry.value.riskAssessment =
+            "✅ Low Complexity (Score: ${entry.value.cognitiveComplexity}) - Everything looks good!";
       }
     }
 

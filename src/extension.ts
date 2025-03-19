@@ -5,6 +5,8 @@ import {
 	LanguageClientOptions,
 	ServerOptions,
 } from 'vscode-languageclient/node';
+import { ComplexityResult } from './utils';
+import { RefactorPanel } from './refactor-panel';
 
 let client: LanguageClient;
 
@@ -29,7 +31,6 @@ export function activate(context: vscode.ExtensionContext) {
 		},
 	};
 
-	// Create the client
 	client = new LanguageClient(
 		'dart-guide',
 		'Dart Guide',
@@ -40,9 +41,23 @@ export function activate(context: vscode.ExtensionContext) {
 	// Register command handler for complexity details
 	const commandHandler = vscode.commands.registerCommand(
 		'complexity.showComplexity',
-		() => {
-			// This would run if the code lens is clicked
-			// You can add additional functionality here if needed
+		(details) => {
+			if (details) {
+				const {
+					name,
+					type,
+					complexityCategory,
+					cognitiveComplexity,
+					nestingLevel,
+					numberOfParameters
+				} = details;
+				RefactorPanel.createOrShow(
+					context.extensionUri,
+					vscode.window.activeTextEditor?.document!,
+					vscode.window.activeTextEditor?.selection.active!,
+					cognitiveComplexity
+				);
+			}
 		}
 	);
 
