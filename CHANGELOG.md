@@ -1,9 +1,13 @@
 # Change Log
 
-All notable changes to the "dart-guide" extension will be documented in this file.
+All notable changes to the "DartMind" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## [0.0.1] - 2023-10-13
 
-## [Unreleased]
+### Added
 
-- Initial release
+- Initial release of DartMind
+- Basic code complexity analysis for Dart files
+- Code margin indicators showing complexity levels
+- "Show Code Complexity" command in the command palette
+- Configuration option to enable/disable complexity analysis

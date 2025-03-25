@@ -1,71 +1,81 @@
-# dart-guide README
+# DartMind
 
-This is the README for your extension "dart-guide". After writing up a brief description, we recommend including the following sections.
+DartMind is an intelligent VS Code extension that provides real-time code analysis for Dart and Flutter projects. It helps developers write cleaner, more maintainable code by analyzing cognitive complexity, detecting code smells, and offering performance insights.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+DartMind offers several powerful features to improve your Dart and Flutter development workflow:
 
-For example if there is an image subfolder under your extension project workspace:
+### Code Complexity Analysis
 
-\!\[feature X\]\(images/feature-x.png\)
+Visualize the cognitive complexity of your Dart code directly in your editor:
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+- Color-coded complexity indicators in the editor margin
+- Detailed breakdown of complexity factors
+- Suggestions for simplifying complex methods
+
+### Code Smell Detection
+
+Identify potential code smells and anti-patterns in your codebase:
+
+- Highlights code that may be difficult to maintain
+- Detects common Flutter performance pitfalls
+- Suggests best practices for cleaner code
+
+### Performance Insights
+
+Get real-time feedback on potential performance issues:
+
+- Identifies expensive operations in build methods
+- Highlights unnecessary widget rebuilds
+- Suggests performance optimizations
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- VS Code 1.60.0 or higher
+- Dart SDK
+- Flutter SDK (for Flutter projects)
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+DartMind contributes the following settings:
 
-For example:
+- `codeComplexity.enabled`: Enable/disable code complexity analysis (default: true)
 
-This extension contributes the following settings:
+## Commands
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+- `dartmind.showComplexity`: Show detailed code complexity analysis for the current file
+
+## Usage
+
+1. Open a Dart or Flutter project in VS Code
+2. The extension automatically activates when you open a Dart file
+3. Code complexity indicators will appear in the editor margin
+4. Hover over indicators for more details
+5. Use the command palette (`Ctrl+Shift+P` or `Cmd+Shift+P`) and select "Show Code Complexity" for a detailed analysis
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- Currently optimized for smaller files; may have performance issues with very large Dart files
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.0.1
 
-### 1.0.0
+Initial release of DartMind with:
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+- Basic code complexity analysis
+- Code margin indicators
+- "Show Code Complexity" command
 
 ---
 
-## Following extension guidelines
+## Contributing
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+## License
 
-## Working with Markdown
+This extension is licensed under the MIT License.
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+**Enjoy writing cleaner Dart code!**
