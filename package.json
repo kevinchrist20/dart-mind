@@ -3,6 +3,18 @@
   "displayName": "DartMind",
   "description": "DartMind is an intelligent VS Code extension that provides real-time code analysis for Dart and Flutter projects. It helps developers write cleaner, more maintainable code by analyzing cognitive complexity, detecting code smells, and offering performance insights.",
   "version": "0.0.1",
+  "publisher": "YourPublisherName",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/dart-mind"
+  },
+  "keywords": [
+    "dart",
+    "flutter",
+    "code analysis",
+    "complexity"
+  ],
+  "icon": "images/icon.png",
   "engines": {
     "vscode": "^1.60.0"
   },
