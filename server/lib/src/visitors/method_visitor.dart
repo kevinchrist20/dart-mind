@@ -58,7 +58,7 @@ class MethodVisitor extends RecursiveAstVisitor<void> {
     _incrementComplexity(1);
 
     if (currentNestingLevel > 0) {
-      _incrementComplexity(currentNestingLevel); // add nesting cost
+      _incrementComplexity(currentNestingLevel);
     }
 
     currentNestingLevel++;
