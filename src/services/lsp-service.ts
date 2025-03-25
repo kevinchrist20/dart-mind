@@ -14,9 +14,6 @@ export class LspService {
     this.extensionPath = extensionPath;
   }
 
-  /**
-   * Initialize and start the LSP client
-   */
   public start(): LanguageClient {
     const serverScript = path.join(this.extensionPath, 'server', 'bin', 'main.dart');
 
@@ -38,15 +35,13 @@ export class LspService {
       },
     };
 
-    // Create the language client
     this.client = new LanguageClient(
-      'dart-guide',
+      'dart-mind',
       'DartMind',
       serverOptions,
       clientOptions
     );
 
-    // Start the client
     this.client.start();
 
     return this.client;

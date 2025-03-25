@@ -15,44 +15,31 @@ export class RefactorPanel extends BasePanel {
     );
   }
 
-  /**
-   * Creates or shows the refactor panel
-   */
   public static createOrShow(
     extensionUri: vscode.Uri,
-    document: vscode.TextDocument,
-    position: vscode.Position,
     complexityData: ComplexityResult
   ): RefactorPanel {
     const column = vscode.window.activeTextEditor
       ? vscode.ViewColumn.Beside
       : vscode.ViewColumn.One;
 
-    // If we already have a panel, show it
     if (RefactorPanel.instance) {
       RefactorPanel.instance.reveal(column);
       RefactorPanel.instance.updateContent(complexityData);
       return RefactorPanel.instance;
     }
 
-    // Otherwise, create a new panel
     RefactorPanel.instance = new RefactorPanel(extensionUri, column);
     RefactorPanel.instance.updateContent(complexityData);
 
     return RefactorPanel.instance;
   }
 
-  /**
-   * Disposes the panel
-   */
   public dispose(): void {
     RefactorPanel.instance = undefined;
     super.dispose();
   }
 
-  /**
-   * Generates HTML content for the refactor panel
-   */
   protected getHtmlContent(): string {
     const data = this.data as ComplexityResult;
     if (!data) {
@@ -62,7 +49,7 @@ export class RefactorPanel extends BasePanel {
     // Define colors based on complexity
     let headerColor = 'var(--vscode-textLink-foreground)';
     let borderColor = 'var(--vscode-editor-foreground)';
-    let headerIcon = '🔍';
+    let headerIcon = '✅';
 
     switch (data.complexityCategory.toLowerCase()) {
       case 'high':
@@ -77,8 +64,6 @@ export class RefactorPanel extends BasePanel {
         break;
       case 'low':
         headerColor = 'var(--vscode-terminal-ansiGreen)';
-        borderColor = 'var(--vscode-editor-foreground)';
-        headerIcon = '✅';
         break;
     }
 

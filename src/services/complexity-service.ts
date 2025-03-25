@@ -9,9 +9,6 @@ export class ComplexityService {
     this.context = context;
   }
 
-  /**
-   * Register complexity analysis commands
-   */
   public registerCommands(): vscode.Disposable[] {
     const commandHandler = vscode.commands.registerCommand(
       COMMANDS.SHOW_COMPLEXITY,
@@ -21,9 +18,6 @@ export class ComplexityService {
     return [commandHandler];
   }
 
-  /**
-   * Handle the show complexity command
-   */
   private handleShowComplexity(details: any): void {
     if (!details) {
       return;
@@ -38,12 +32,10 @@ export class ComplexityService {
       numberOfParameters,
       refactoringSuggestions
     } = details;
-    
+
     // Pass all data to the refactor panel
     RefactorPanel.createOrShow(
       this.context.extensionUri,
-      vscode.window.activeTextEditor?.document!,
-      vscode.window.activeTextEditor?.selection.active!,
       {
         name,
         type,

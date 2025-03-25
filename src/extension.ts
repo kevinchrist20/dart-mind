@@ -9,7 +9,6 @@ export function activate(context: vscode.ExtensionContext) {
   const lspService = new LspService(context.extensionPath);
   const client = lspService.start();
   
-  // Initialize complexity service
   const complexityService = new ComplexityService(context);
   const complexityCommands = complexityService.registerCommands();
   
